@@ -121,7 +121,12 @@
     enable = true;
     settings = {
       General = {
-        Experimental = "*";
+        Experimental = "true";
+        FastConnectable = "true";
+        ControllerMode = "dual";
+      };
+      Policy = {
+        AutoEnable = "true";
       };
     };
   };
@@ -164,8 +169,10 @@
     gimp
     krita
     gparted
+    keychain
     okular
     zsh
+    oh-my-zsh
     vlc
     mpv
     ffmpeg-full
@@ -192,7 +199,7 @@
     whois
     valgrind
     imagemagick
-    python3
+    (python3.withPackages(x: with x; [ pandas requests aiofiles aiohttp yt-dlp ]))
     file
     anki-bin
     wireshark
@@ -212,12 +219,12 @@
 
   environment.etc = {
     "wireplumber/bluetooth.lua.d/51-bluez-config.lua".text = ''
-        bluez_monitor.properties = {
-                ["bluez5.enable-sbc-xq"] = true,
-                ["bluez5.enable-msbc"] = true,
-                ["bluez5.enable-hw-volume"] = true,
-                ["bluez5.headset-roles"] = "[ hsp_hs hsp_ag hfp_hf hfp_ag ]"
-        }
+  	bluez_monitor.properties = {
+  		["bluez5.enable-sbc-xq"] = true,
+  		["bluez5.enable-msbc"] = true,
+		["bluez5.enable-hw-volume"] = true,
+  		["bluez5.headset-roles"] = "[ hsp_hs hsp_ag hfp_hf hfp_ag ]"
+  	}
     '';
     "wireplumber/main.lua.d/90-suspend-timeout.lua" = {
        text = ''
@@ -231,7 +238,7 @@
       address = [ "10.8.0.2/24" ];
       dns = [ "1.1.1.1" ];
       privateKeyFile = "/etc/nixos/privatekey";
-
+      
       peers = [
         {
           publicKey = "";
@@ -248,9 +255,12 @@
   programs.zsh = {
     enable = true;
     shellAliases = {
-      ll = "ls -l";
+      ll = "ls -la";
     };
     histSize = 100000;
+    autosuggestions.enable = true;
+    enableCompletion = true;
+    syntaxHighlighting.enable = true;
     ohMyZsh = {
       enable = true;
       plugins = [
@@ -258,6 +268,30 @@
       ];
       theme = "mh";
     };
+    interactiveShellInit = ''
+        autoload -Uz compinit
+        autoload -Uz promptinit
+        compinit
+        promptinit
+
+        HISTFILE=~/.zsh_history
+        SAVEHIST=8000
+
+        bindkey -v
+        bindkey -e
+        bindkey "^[[1;5D" backward-word
+        bindkey "^[[1;5C" forward-word
+
+        export LANG=en_US.UTF-8
+        eval $(keychain --eval --quiet ~/.ssh/interlinked)
+        
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+        
+        alias soundcloud='python3 -m yt_dlp -o "%(uploader)s — %(title)s.%(ext)s" --embed-thumbnail --add-metadata -x --audio-format=mp3 '
+        alias air='~/go/bin/air'
+    '';
   };
 
   services.locate.enable = true;
@@ -282,12 +316,12 @@
   # networking.firewall.enable = false;
 
   fonts.fonts = with pkgs; [
-    fira-code
-    fira-code-symbols
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    liberation_ttf
+	  fira-code
+	  fira-code-symbols
+	  noto-fonts
+	  noto-fonts-cjk
+	  noto-fonts-emoji
+	  liberation_ttf
   ];
 
   # This value determines the NixOS release from which the default
