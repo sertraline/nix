@@ -165,6 +165,7 @@
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     git
+    keepassxc
     curl
     gimp
     krita
@@ -181,7 +182,6 @@
     htop
     mlocate
     vscode
-    android-studio
     wireguard-tools
     xdg-desktop-portal-kde
     plasma-browser-integration
