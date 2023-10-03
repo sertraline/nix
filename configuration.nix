@@ -154,7 +154,7 @@
   };
 
   users.defaultUserShell = pkgs.zsh;
-
+  programs.direnv.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
