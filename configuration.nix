@@ -186,6 +186,7 @@
     xdg-desktop-portal-kde
     plasma-browser-integration
     firefox-bin
+    qbittorrent
     chromium
     virt-manager
     docker-compose
@@ -284,10 +285,6 @@
 
         export LANG=en_US.UTF-8
         eval $(keychain --eval --quiet ~/.ssh/interlinked)
-        
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
         
         alias soundcloud='python3 -m yt_dlp -o "%(uploader)s — %(title)s.%(ext)s" --embed-thumbnail --add-metadata -x --audio-format=mp3 '
         alias air='~/go/bin/air'
