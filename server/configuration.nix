@@ -29,6 +29,45 @@
       ports = [ 2216 ];
     };
 
+    services.nginx = {
+      enable = true;
+      recommendedTlsSettings = true;
+      recommendedOptimisation = true;
+      recommendedGzipSettings = true;
+      recommendedProxySettings = true;
+    
+      virtualHosts = {
+        "acid.im" = {
+          root = "SED";
+          listen = [
+            { addr = "0.0.0.0"; port = 80; }
+            { addr = "0.0.0.0"; port = 443; ssl = true; }
+          ];
+          forceSSL = true;
+          enableACME = true;
+          locations."/archive".extraConfig = ''
+            autoindex on;
+          '';
+         };
+        "SED" = {
+          enableACME = true;
+          forceSSL = true;
+          locations."/" = {
+            proxyPass = "http://127.0.0.1:3000";
+            extraConfig = ''
+              proxy_pass_header Authorization;
+            '';
+          };
+        };
+        };
+      };
+
+    security.acme = {
+      acceptTerms = true;
+      defaults.email = "SED";
+    };
+
+
     environment.systemPackages = map lib.lowPrio [
       pkgs.curl
       pkgs.gitMinimal
@@ -50,6 +89,8 @@
       imagemagick
       file
       oh-my-zsh
+      (python3.withPackages(x: with x; [ pandas requests aiofiles aiohttp yt-dlp ]))
+      go
     ]);
 
     virtualisation = {
@@ -119,6 +160,7 @@
     networking.nat.internalInterfaces = [ "wg0" ];
     networking.firewall = {
       allowedUDPPorts = [ 51820 ];
+      allowedTCPPorts = [ 80 443 ];
     };
 
     networking.wireguard.interfaces = {

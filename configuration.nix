@@ -187,6 +187,7 @@
     plasma-browser-integration
     firefox-bin
     qbittorrent
+    neofetch
     chromium
     virt-manager
     docker-compose
@@ -242,9 +243,9 @@
       
       peers = [
         {
-          publicKey = "";
+          publicKey = "SED";
           allowedIPs = [ "0.0.0.0/0" "::/0" ];
-          endpoint = "10.2.0.1:51820";
+          endpoint = "SED:51820";
           persistentKeepalive = 25;
         }
       ];
