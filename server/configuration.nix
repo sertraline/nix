@@ -29,6 +29,32 @@
       ports = [ 2216 ];
     };
 
+    services.nextcloud = {
+      enable = true;
+      package = pkgs.nextcloud27;
+      extraApps = with config.services.nextcloud.package.packages.apps; {
+        inherit news contacts calendar tasks;
+      };
+      extraAppsEnable = true;
+      hostName = "SED";
+      database.createLocally = true;
+      config = {
+        dbtype = "pgsql";
+        adminpassFile = "SED";
+        adminuser = "SED";
+      };
+      configureRedis = true;
+      phpOptions = {
+        upload_max_filesize = pkgs.lib.mkForce "1G";
+        post_max_size = pkgs.lib.mkForce "1G";
+      };
+    };
+
+    systemd.services."nextcloud-setup" = {
+        requires = ["postgresql.service"];
+        after = ["postgresql.service"];
+    };
+
     services.nginx = {
       enable = true;
       recommendedTlsSettings = true;
@@ -58,6 +84,10 @@
               proxy_pass_header Authorization;
             '';
           };
+        };
+        "${config.services.nextcloud.hostName}" = {
+          forceSSL = true;
+          enableACME = true;
         };
         };
       };
@@ -192,6 +222,11 @@
         ];
       };
     };
+
+    swapDevices = [ {
+       device = "/var/lib/swapfile";
+       size = 4*1024;
+    }];
 
     system.stateVersion = "23.11";
 }
