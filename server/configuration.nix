@@ -108,6 +108,7 @@
       ffmpeg
       git
       wget
+      zip
       unzip
       unrar
       patchelf
